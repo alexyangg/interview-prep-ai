@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.db import models
+from app.api.interviews import router as interviews_router
 
 DEFAULT_INTERVIEW_LIMIT = 50
 
@@ -35,3 +36,4 @@ def list_interviews(db: Session = Depends(get_db)):
         ]
     }
 
+router.include_router(interviews_router)

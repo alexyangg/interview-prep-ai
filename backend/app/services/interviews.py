@@ -14,8 +14,19 @@ def create_interview(db: Session, data: InterviewCreate) -> models.Interview:
 def get_interview(db: Session, interview_id: int) -> models.Interview:
     interview = db.query(models.Interview).filter(models.Interview.id == interview_id).first()
     if not interview:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Inteerview not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Interview not found")
     return interview
+
+def list_interviews(
+        db: Session, user_id: int, limit: int = 50, offset: int = 0
+) -> list[models.Interview]:
+    return (db.query(models.Interview)
+            .filter(models.Interview.user_id == user_id)
+            .order_by(models.Interview.id.desc()) # newest first
+            .limit(limit)
+            .offset(offset) # skip some rows for pagination
+            .all() # return as a list of ORM objects
+        )
 
 def update_interview(db: Session, interview_id: int, data: InterviewUpdate) -> models.Interview:
     interview = get_interview(db, interview_id)
@@ -29,14 +40,3 @@ def delete_interview(db: Session, interview_id: int) -> None:
     interview = get_interview(db, interview_id)
     db.delete(interview)
     db.commit()
-
-def list_interviews(
-        db: Session, user_id: int, limit: int = 50, offset: int = 0
-) -> list[models.Interview]:
-    return (db.query(models.Interview)
-            .filter(models.Interview.user_id == user_id)
-            .order_by(models.Interview.id.desc()) # newest first
-            .limit(limit)
-            .offset(offset) # skip some rows for pagination
-            .all() # return as a list of ORM objects
-)
