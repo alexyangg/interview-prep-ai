@@ -3,6 +3,8 @@ from fastapi import HTTPException, status
 
 from app.db import models
 from app.schemas import InterviewCreate, InterviewUpdate
+from app.schemas.common import PaginationParams
+from app.api.deps import pagination_params
 
 def create_interview(db: Session, data: InterviewCreate) -> models.Interview:
     interview = models.Interview(**data.model_dump()) # .model_dump: Pydantic model to dict. **: construct new ORM object from dict
@@ -18,13 +20,13 @@ def get_interview(db: Session, interview_id: int) -> models.Interview:
     return interview
 
 def list_interviews(
-        db: Session, user_id: int, limit: int = 50, offset: int = 0
+        db: Session, user_id: int, pagination: PaginationParams
 ) -> list[models.Interview]:
     return (db.query(models.Interview)
             .filter(models.Interview.user_id == user_id)
             .order_by(models.Interview.id.desc()) # newest first
-            .limit(limit)
-            .offset(offset) # skip some rows for pagination
+            .limit(pagination.limit)
+            .offset(pagination.offset) # skip some rows for pagination
             .all() # return as a list of ORM objects
         )
 
