@@ -1,4 +1,4 @@
-from backend.app.schemas.common import PaginationParams
+from app.schemas.common import PaginationParams
 
 def pagination_params(
     limit: int,

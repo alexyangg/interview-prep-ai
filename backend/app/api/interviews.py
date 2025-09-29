@@ -41,9 +41,9 @@ def get_interview(interview_id: int, db: Session = Depends(get_db)):
     responses={404: {"model": ErrorResponse}}
 )
 def list_interviews(
+    db: Session = Depends(get_db),
     user_id: int = Query(..., description="Interviews for this user ID"), # TODO: get user_id from auth token
-    pagination: PaginationParams = Depends(pagination_params),
-    db: Session = Depends(get_db)
+    pagination: PaginationParams = Depends(pagination_params)
 ):
     return interview_service.list_interviews(db, user_id, pagination.limit, pagination.offset)
 
