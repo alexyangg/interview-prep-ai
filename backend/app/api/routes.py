@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from app.api.interviews import router as interviews_router
+from app.api.users import router as users_router
 
 router = APIRouter()
 
@@ -8,7 +9,5 @@ router = APIRouter()
 def v1_health():
     return {"status": "ok", "scope": "v1"}
 
-# Legacy endpoint moved to interviews.py router
-# Keeping DEFAULT_INTERVIEW_LIMIT for reference but not used anymore
-
 router.include_router(interviews_router)
+router.include_router(users_router)
